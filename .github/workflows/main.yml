@@ -1,0 +1,57 @@
+name: Admin contributions
+
+on:
+
+  push:
+    branches:
+      - master
+      
+  schedule:
+  - cron: "0 */4 * * *" # See https://crontab.guru/#0_7,9,11_*_*_1,3
+  workflow_dispatch:
+    inputs:
+      run-manual:
+        description: 'Trigger manual run'
+        required: false
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: DEBUG 
+        run: echo "::debug::Ref = ${{github.ref}}"
+      - uses: actions/checkout@v3      
+        with:
+         persist-credentials: false
+         fetch-depth: 0
+
+      - name: Modify last update
+        run: |
+          d=`date '+%Y-%m-%dT%H:%M:%SZ'`
+          echo $d > Update Status
+          
+      - name: Commit changes
+        run: |
+          git config --local user.email "airalean10@gmx.com"
+          git config --local user.name "apl0C"
+          git add -A
+          
+          arr[0]="Admin(contributions): 😂 Add support for Hisense-hs530r"
+          arr[1]="Admin(contributions): 😱 Add Support for Waydroid(linux-5.15.y)"
+          arr[2]="Admin(contributions): 👿 Update model_database.conf"
+          arr[3]="Admin(contributions): 💩 Update config to the latest version"
+          arr[4]="Admin(contributions): 🙏 Remove nanopi-r2s(rk3328)"
+          arr[5]="Admin(contributions): 🙈 Update config for 6.6.y"
+          arr[6]="Admin(contributions): 🐐 Add wifi for panther-x2(rk3566)"
+          arr[7]="Admin(contributions): 🤖 armbian-update: Optimization checks shown"
+          arr[8]="Admin(contributions): 🟩 Add support for nanopi-r2s(rk3328)"
+          arr[9]="Admin(contributions): 👻 armbian-software: Update qbittorrent password viewing instructions"
+          
+          rand=$[$RANDOM % ${#arr[@]}]
+          
+          git commit -m "${arr[$rand]}"
+          
+      - name: GitHub Push
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          directory: "."
+          github_token: ${{ secrets.GITHUB_TOKEN }}
